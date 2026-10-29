@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-amber-50/40">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Carnets de Souad</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        terracotta: {
+                            50: '#fdf8f6',
+                            100: '#f9eee9',
+                            500: '#e07a5f',
+                            600: '#d15d3f',
+                            700: '#b44327',
+                            800: '#94371f',
+                        },
+                        marrakech: {
+                            red: '#a8322d',
+                            clay: '#f4e8dc',
+                            gold: '#d4af37',
+                            ochre: '#c67d34'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Cormorant Garamond', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Traditional Moroccan Zellige Tile Background Pattern in Inline SVG */
+        .zellige-pattern {
+            background-color: #fbf7f2;
+            background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c67d34' fill-opacity='0.08' fill-rule='evenodd'%3E%3Cpath d='M0 0h40v40H0V0zm40 40h40v40H40V40zm0-40l20 20-20 20-20-20L40 0zm0 40l20 20-20 20-20-20 20-20zM0 40l20 20-20 20-20-20L0 40zm80 0l20 20-20 20-20-20 20-20zM20 20l20 20-20 20-20-20 20-20zm40 0l20 20-20 20-20-20 20-20z'/%3E%3Cpath d='M40 20l10 10-10 10-10-10 10-10zm0 40l10 10-10 10-10-10 10-10zM20 40l10 10-10 10-10-10 10-10zm40 0l10 10-10 10-10-10 10-10z' fill='%23a8322d' fill-opacity='0.06'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .zellige-border {
+            background-image: repeating-linear-gradient(45deg, #a8322d 0, #a8322d 15px, #d4af37 15px, #d4af37 30px, #2b5b84 30px, #2b5b84 45px, #f4e8dc 45px, #f4e8dc 60px);
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans text-stone-800 antialiased zellige-pattern selection:bg-amber-200 selection:text-marrakech-red">
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b-2 border-amber-600/30 shadow-md">
+        <div class="h-1.5 zellige-border w-full"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('all')" data-testid="nav-logo">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-terracotta-600 via-marrakech-red to-amber-600 flex items-center justify-center text-amber-200 shadow-md shadow-terracotta-600/30 border border-amber-400/40">
+                        <i class="fa-solid fa-utensils text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-serif text-2xl font-bold tracking-tight text-stone-900 block leading-none">Les Carnets de <span class="text-marrakech-red">Souad</span></span>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav -->
+                <nav class="hidden md:flex items-center space-x-2">
+                    <button onclick="switchTab('all')" id="nav-all" data-testid="nav-all-recipes" class="nav-btn px-4 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 text-terracotta-800 bg-terracotta-100">
+                        <i class="fa-solid fa-book-bookmark mr-2"></i>Toutes les recettes
+                    </button>
+                    <button onclick="switchTab('favorites')" id="nav-favorites" data-testid="nav-favorites" class="nav-btn px-4 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 text-stone-600 hover:text-stone-900 hover:bg-amber-100/50">
+                        <i class="fa-solid fa-heart mr-2 text-marrakech-red"></i>Mes Favoris (<span id="fav-count" data-testid="fav-count">0</span>)
+                    </button>
+                    <button onclick="switchTab('groceries')" id="nav-groceries" data-testid="shopping-list-tab" class="nav-btn px-4 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 text-stone-600 hover:text-stone-900 hover:bg-amber-100/50">
+                        <i class="fa-solid fa-cart-shopping mr-2 text-emerald-600"></i>Ma Liste de Courses (<span id="grocery-count" data-testid="grocery-count">0</span>)
+                    </button>
+
+                    <!-- VIP Status Button -->
+                    <button onclick="openVipModal()" id="vip-status-btn" data-testid="vip-status-btn" class="px-4 py-2.5 rounded-full font-bold text-sm transition-all duration-200 bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md hover:from-amber-600 hover:to-amber-700 flex items-center gap-2 border border-amber-300">
+                        <i class="fa-solid fa-crown text-amber-200"></i> <span id="vip-btn-text">Espace VIP</span>
+                    </button>
+
+                    <!-- Auth Button -->
+                    <button onclick="handleAuthClick()" id="auth-btn" data-testid="auth-btn" class="px-4 py-2.5 rounded-full font-semibold text-sm text-stone-700 bg-stone-100 hover:bg-stone-200 transition flex items-center gap-2">
+                        <i class="fa-solid fa-user" id="auth-btn-icon"></i> <span id="auth-btn-text">Connexion</span>
+                    </button>
+
+                    <button onclick="openAddModal()" data-testid="nav-add-recipe" class="ml-2 px-6 py-2.5 rounded-full font-semibold text-sm text-white bg-marrakech-red hover:bg-terracotta-700 shadow-md shadow-marrakech-red/20 active:scale-95 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-plus"></i>Ajouter une recette
+                    </button>
+                </nav>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center gap-2">
+                    <button onclick="openAddModal()" data-testid="mobile-add-btn" class="p-2.5 rounded-full bg-marrakech-red text-white">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button onclick="toggleMobileMenu()" data-testid="mobile-menu-btn" class="p-2.5 rounded-lg text-stone-600 hover:bg-stone-100">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-b border-amber-200 bg-white px-4 py-3 space-y-2">
+            <button onclick="switchTab('all'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl font-medium text-stone-700 hover:bg-amber-50">
+                <i class="fa-solid fa-book-bookmark mr-2 text-marrakech-red"></i>Toutes les recettes
+            </button>
+            <button onclick="switchTab('favorites'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl font-medium text-stone-700 hover:bg-amber-50">
+                <i class="fa-solid fa-heart mr-2 text-marrakech-red"></i>Mes Favoris
+            </button>
+            <button onclick="switchTab('groceries'); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl font-medium text-stone-700 hover:bg-emerald-50">
+                <i class="fa-solid fa-cart-shopping mr-2 text-emerald-600"></i>Ma Liste de Courses
+            </button>
+            <button onclick="openVipModal(); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl font-medium text-amber-800 hover:bg-amber-50">
+                <i class="fa-solid fa-crown mr-2 text-amber-600"></i>Abonnement VIP
+            </button>
+            <button onclick="handleAuthClick(); toggleMobileMenu()" class="w-full text-left px-4 py-2.5 rounded-xl font-medium text-stone-700 hover:bg-stone-100">
+                <i class="fa-solid fa-user mr-2 text-stone-600"></i><span id="mobile-auth-btn-text">Connexion</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- AUTHENTICATION CARD (LOGIN & REGISTRATION) WHEN LOGGED OUT -->
+        <section id="login-wall-section" data-testid="login-wall-section" class="mb-10 bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-xl border border-amber-200 max-w-xl mx-auto">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-amber-100 text-marrakech-red rounded-full flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner">
+                    <i class="fa-solid fa-lock" id="auth-icon-header"></i>
+                </div>
+                <h2 class="font-serif text-3xl font-bold text-stone-900" id="auth-form-title">Connexion</h2>
+                <p class="text-stone-600 text-sm mt-1" id="auth-form-subtitle">Veuillez vous connecter pour accéder aux recettes de Souad.</p>
+            </div>
+
+            <!-- Tab selector between Login and Register -->
+            <div class="flex bg-stone-100 p-1 rounded-2xl mb-6">
+                <button type="button" onclick="switchAuthTab('login')" id="auth-tab-login" data-testid="auth-tab-login" class="flex-1 py-2 rounded-xl text-xs font-bold transition bg-white text-marrakech-red shadow-sm">
+                    Se connecter
+                </button>
+                <button type="button" onclick="switchAuthTab('register')" id="auth-tab-register" data-testid="auth-tab-register" class="flex-1 py-2 rounded-xl text-xs font-bold transition text-stone-600 hover:text-stone-900">
+                    Créer un compte
+                </button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form id="login-form" onsubmit="handleLoginSubmit(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Adresse Email *</label>
+                    <input type="email" id="login-email-input" data-testid="login-email-input" placeholder="exemple@carnets-souad.fr" required class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-amber-200 rounded-xl outline-none focus:ring-2 focus:ring-marrakech-red text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Mot de passe *</label>
+                    <input type="password" id="login-password-input" data-testid="login-password-input" placeholder="••••••••" required class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-amber-200 rounded-xl outline-none focus:ring-2 focus:ring-marrakech-red text-sm">
+                </div>
+                <div id="login-error-msg" data-testid="login-error-msg" class="hidden text-xs text-rose-600 font-bold p-2 bg-rose-50 rounded-lg">
+                    Identifiants incorrects. Veuillez réessayer ou créer un compte.
+                </div>
+                <button type="submit" id="login-submit-btn" data-testid="login-submit-btn" class="w-full py-3 bg-marrakech-red hover:bg-terracotta-700 text-white font-bold text-sm rounded-xl shadow-md transition">
+                    Se connecter
+                </button>
+            </form>
+
+            <!-- REGISTRATION FORM -->
+            <form id="register-form" onsubmit="handleRegisterSubmit(event)" class="space-y-4 text-left hidden">
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Nom complet *</label>
+                    <input type="text" id="register-name-input" data-testid="register-name-input" placeholder="Souad Amrani" required class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-amber-200 rounded-xl outline-none focus:ring-2 focus:ring-marrakech-red text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Adresse Email *</label>
+                    <input type="email" id="register-email-input" data-testid="register-email-input" placeholder="exemple@carnets-souad.fr" required class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-amber-200 rounded-xl outline-none focus:ring-2 focus:ring-marrakech-red text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Mot de passe *</label>
+                    <input type="password" id="register-password-input" data-testid="register-password-input" placeholder="••••••••" required class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-amber-200 rounded-xl outline-none focus:ring-2 focus:ring-marrakech-red text-sm">
+                </div>
+                <div id="register-error-msg" data-testid="register-error-msg" class="hidden text-xs text-rose-600 font-bold p-2 bg-rose-50 rounded-lg">
+                    Cet email est déjà enregistré.
+                </div>
+                <button type="submit" id="register-btn" data-testid="register-btn" class="w-full py-3 bg-marrakech-red hover:bg-terracotta-700 text-white font-bold text-sm rounded-xl shadow-md transition">
+                    Créer mon compte
+                </button>
+            </form>
+        </section>
+
+        <!-- APP CONTENT WRAPPER (HIDDEN WHEN LOGGED OUT) -->
+        <div id="authenticated-app-content" class="hidden">
+            <!-- Hero Section -->
+            <section class="mb-10 text-center md:text-left md:flex md:items-center md:justify-between bg-gradient-to-br from-terracotta-700 via-marrakech-red to-amber-700 rounded-3xl p-8 sm:p-12 text-white shadow-xl shadow-terracotta-800/20 relative overflow-hidden border border-amber-400/30">
+                <div class="absolute -right-12 -bottom-12 w-80 h-80 bg-amber-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-white/15 text-amber-100 border border-white/20 mb-4 backdrop-blur-sm">
+                        <i class="fa-solid fa-pepper-hot text-amber-300"></i> Cuisine Familiale & Pâtisseries Orientales
+                    </span>
+                    <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight">
+                        Bienvenue dans le carnet de gourmandises de Souad.
+                    </h1>
+                    <p class="mt-4 text-amber-100/90 text-sm sm:text-base font-light leading-relaxed">
+                        Tajines parfumés, couscous traditionnels, cornes de gazelle et délices sucrés. Explorez mes recettes quotidiennes et accédez à nos secrets VIP d'exception.
+                    </p>
+                </div>
+                <div class="mt-6 md:mt-0 relative z-10 shrink-0 flex flex-wrap gap-3 justify-center">
+                    <button onclick="openVipModal()" data-testid="hero-vip-btn" class="px-6 py-3 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-stone-900 text-xs font-bold shadow-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-crown text-amber-900"></i> Devenir Membre VIP
+                    </button>
+                    <button onclick="switchTab('groceries')" class="px-5 py-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-medium backdrop-blur-sm border border-white/20 transition flex items-center gap-2">
+                        <i class="fa-solid fa-basket-shopping"></i> Ma liste de courses
+                    </button>
+                </div>
+            </section>
+
+            <!-- FILTERS & SEARCH BAR SECTION -->
+            <section id="recipe-filters-section" class="mb-8 space-y-4">
+                <div class="bg-white/90 backdrop-blur-sm p-4 sm:p-6 rounded-3xl shadow-sm border border-amber-200/80 space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
+                        
+                        <!-- Search Input -->
+                        <div class="lg:col-span-5 relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-stone-400"></i>
+                            <input 
+                                type="text" 
+                                id="search-input" 
+                                data-testid="search-input" 
+                                placeholder="Rechercher une pâtisserie, un tajine..." 
+                                oninput="applyFilters()"
+                                class="w-full pl-11 pr-4 py-3 bg-marrakech-clay/50 border border-amber-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-marrakech-red focus:bg-white transition text-sm"
+                            >
+                        </div>
+
+                        <!-- Category Filter -->
+                        <div class="lg:col-span-3">
+                            <select 
+                                id="category-filter" 
+                                data-testid="category-filter" 
+                                onchange="applyFilters()"
+                                class="w-full py-3 px-4 bg-marrakech-clay/50 border border-amber-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-marrakech-red focus:bg-white transition text-sm text-stone-700 font-semibold"
+                            >
+                                <option value="all">Toutes les catégories</option>
+                                <option value="Pâtisserie">Pâtisserie & Douceurs</option>
+                                <option value="Plats">Plats & Tajines</option>
+                                <option value="Entrées">Entrées & Pain Maison</option>
+                            </select>
+                        </div>
+
+                        <!-- Difficulty / VIP Filter -->
+                        <div class="lg:col-span-3">
+                            <select 
+                                id="difficulty-filter" 
+                                data-testid="difficulty-filter" 
+                                onchange="applyFilters()"
+                                class="w-full py-3 px-4 bg-marrakech-clay/50 border border-amber-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-marrakech-red focus:bg-white transition text-sm text-stone-700 font-semibold"
+                            >
+                                <option value="all">Tous les accès</option>
+                                <option value="free">Recettes Gratuites</option>
+                                <option value="vip">Exclusivités VIP 👑</option>
+                            </select>
+                        </div>
+
+                        <!-- Clear Filters Button -->
+                        <div class="lg:col-span-1 flex items-center justify-end">
+                            <button 
+                                onclick="clearFilters()" 
+                                data-testid="clear-filters-btn" 
+                                title="Réinitialiser les filtres" 
+                                class="w-full h-full py-3 sm:py-0 px-3 flex items-center justify-center rounded-2xl border border-amber-200 text-stone-500 hover:text-marrakech-red hover:bg-amber-50 transition"
+                            >
+                                <i class="fa-solid fa-filter-circle-xmark text-lg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Active Filter Pills & Counter -->
+                    <div class="flex items-center justify-between pt-3 border-t border-amber-100 text-xs text-stone-500">
+                        <div>
+                            Recette(s) affichée(s) : <span id="results-count" data-testid="results-count" class="font-bold text-stone-800">0</span>
+                        </div>
+                        <div id="active-tab-label" data-testid="active-tab-label" class="font-semibold text-marrakech-red uppercase tracking-wider">
+                            Toutes les recettes
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RECIPES GRID -->
+            <section id="recipes-grid" data-testid="recipes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Dynamic Recipe Cards -->
+            </section>
+
+            <!-- SHOPPING LIST VIEW -->
+            <section id="groceries-section" class="hidden space-y-6">
+                <div class="bg-white/90 backdrop-blur-sm p-6 sm:p-8 rounded-3xl shadow-sm border border-amber-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h2 class="font-serif text-3xl font-bold text-stone-900">Ma Liste de Courses</h2>
+                            <p class="text-xs text-stone-500 mt-1">Vos ingrédients ajoutés directement depuis vos recettes préférées.</p>
+                        </div>
+                        <button onclick="clearAllGroceries()" data-testid="clear-groceries-btn" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs rounded-full transition flex items-center gap-2 self-start sm:self-auto">
+                            <i class="fa-solid fa-trash"></i> Vider toute la liste
+                        </button>
+                    </div>
+
+                    <form onsubmit="handleAddGroceryFromUI(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 mb-8 p-4 bg-marrakech-clay/50 rounded-2xl border border-amber-200/60">
+                        <div class="sm:col-span-5">
+                            <input type="text" id="add-grocery-input" data-testid="add-grocery-input" placeholder="Article (ex: Fleur d'oranger, Citrons confits...)" class="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <input type="number" id="add-grocery-qty" min="0.1" step="any" placeholder="Qté (ex: 250)" class="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <input type="text" id="add-grocery-unit" placeholder="Unité (g, ml)" class="w-full px-4 py-2.5 bg-white border border-stone-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
+                        </div>
+                        <div class="sm:col-span-3">
+                            <button type="submit" id="add-grocery-btn" data-testid="add-grocery-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus"></i> Ajouter l'article
+                            </button>
+                        </div>
+                    </form>
+
+                    <div id="groceries-list" data-testid="groceries-list" class="space-y-3">
+                        <!-- Dynamic Items -->
+                    </div>
+
+                    <div id="empty-groceries-state" class="hidden text-center py-12 text-stone-400">
+                        <i class="fa-solid fa-basket-shopping text-4xl mb-3 text-amber-300"></i>
+                        <p class="text-sm">Votre liste de courses est vide pour le moment.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EMPTY STATE -->
+            <div id="empty-state" data-testid="empty-state" class="hidden text-center py-16 bg-white/90 backdrop-blur-sm rounded-3xl border border-amber-200 shadow-sm mt-4">
+                <div class="w-16 h-16 bg-amber-100 text-marrakech-red rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fa-solid fa-cookie-bite"></i>
+                </div>
+                <h3 class="font-serif text-2xl font-bold text-stone-800">Aucune gourmandise trouvée</h3>
+                <p class="text-stone-500 text-sm mt-1 max-w-sm mx-auto">Essayez de modifier vos filtres ou de réinitialiser la recherche.</p>
+                <button onclick="clearFilters()" class="mt-4 px-5 py-2.5 bg-amber-100 hover:bg-amber-200 text-terracotta-800 text-xs font-semibold rounded-full transition">
+                    Effacer les filtres
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- VIP SUBSCRIPTION & FAKE PAYMENT MODAL -->
+    <div id="vip-modal" data-testid="vip-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-stone-900/70 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border-2 border-amber-400 relative">
+            <button onclick="closeVipModal()" data-testid="close-vip-modal" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-stone-100 text-stone-500 hover:text-stone-900 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="p-8 text-center bg-gradient-to-b from-amber-500 via-amber-600 to-terracotta-700 text-white relative overflow-hidden">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 backdrop-blur border border-white/30">
+                    <i class="fa-solid fa-crown text-3xl text-amber-200"></i>
+                </div>
+                <h2 class="font-serif text-3xl font-bold">Club Gourmand VIP</h2>
+                <p class="text-amber-100 text-xs mt-1">Les grands secrets de la cuisine & pâtisserie marocaine</p>
+            </div>
+
+            <div class="p-8 space-y-6">
+                <ul class="space-y-3 text-sm text-stone-700">
+                    <li class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-amber-500 text-lg"></i> Accès illimité aux recettes d'exception VIP
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-amber-500 text-lg"></i> Secrets d'épices & tours de main de Souad
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-amber-500 text-lg"></i> Ajustement automatique pour grands repas de famille
+                    </li>
+                </ul>
+
+                <!-- Simulated Subscription Form -->
+                <div id="vip-subscribe-view" class="space-y-4 pt-2">
+                    <div class="p-4 rounded-2xl border-2 border-amber-500 bg-amber-50/60 flex items-center justify-between">
+                        <div>
+                            <span class="block font-bold text-stone-900 text-sm">Pass Mensuel VIP</span>
+                            <span class="text-xs text-stone-500">4,99 € / mois • Sans engagement</span>
+                        </div>
+                        <span class="font-bold text-amber-700 text-base">4,99 €</span>
+                    </div>
+
+                    <!-- FAKE PAYMENT GATEWAY API SIMULATION -->
+                    <form onsubmit="handleFakePaymentSubmit(event)" id="payment-form" class="space-y-3 bg-stone-50 p-4 rounded-2xl border border-stone-200">
+                        <div class="text-xs font-bold text-stone-700 uppercase mb-2 flex items-center justify-between">
+                            <span>Paiement Sécurisé</span>
+                            <i class="fa-solid fa-shield-halved text-emerald-600"></i>
+                        </div>
+                        <div>
+                            <input type="text" id="payment-card-name" data-testid="payment-card-name" placeholder="Nom sur la carte" required class="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div>
+                            <input type="text" id="payment-card-input" data-testid="payment-card-input" placeholder="4532 •••• •••• 8888" maxlength="19" required class="w-full px-3 py-2 bg-white border border-stone-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="text" id="payment-exp-input" data-testid="payment-exp-input" placeholder="MM/AA" maxlength="5" required class="px-3 py-2 bg-white border border-stone-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+                            <input type="password" id="payment-cvv-input" data-testid="payment-cvv-input" placeholder="CVC (123)" maxlength="4" required class="px-3 py-2 bg-white border border-stone-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-amber-500 font-mono">
+                        </div>
+
+                        <div id="payment-status-msg" data-testid="payment-status-msg" class="hidden text-xs font-bold p-2.5 rounded-lg text-center"></div>
+
+                        <button type="submit" id="payment-submit-btn" data-testid="payment-submit-btn" class="w-full py-3 bg-gradient-to-r from-amber-500 via-amber-600 to-terracotta-600 hover:from-amber-600 hover:to-terracotta-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-500/20 active:scale-95 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-lock"></i> Payer 4,99 € & Activer VIP
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Already VIP View -->
+                <div id="vip-active-view" class="hidden space-y-4 pt-2 text-center">
+                    <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+                        <i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i> Votre statut VIP est actuellement actif !
+                    </div>
+                    <button onclick="deactivateVipSubscription()" data-testid="cancel-vip-btn" class="w-full py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold text-xs rounded-xl transition">
+                        Désactiver le statut VIP
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECIPE DETAIL MODAL -->
+    <div id="detail-modal" data-testid="detail-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-amber-200 relative">
+            <button onclick="closeDetailModal()" data-testid="close-detail-modal" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/80 backdrop-blur text-stone-600 hover:text-stone-900 flex items-center justify-center shadow-md transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="relative h-64 sm:h-80 w-full overflow-hidden">
+                <img id="detail-img" src="" alt="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 right-6 text-white">
+                    <div class="flex flex-wrap gap-2 mb-2">
+                        <span id="detail-category" data-testid="detail-category" class="px-3.5 py-1 bg-marrakech-red text-white rounded-full text-xs font-semibold tracking-wide"></span>
+                        <span id="detail-difficulty" data-testid="detail-difficulty" class="px-3 py-1 bg-black/40 backdrop-blur text-white rounded-full text-xs font-semibold border border-white/20"></span>
+                        <span id="detail-vip-badge" class="hidden px-3.5 py-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full text-xs font-bold shadow-md">
+                            <i class="fa-solid fa-crown mr-1"></i> VIP
+                        </span>
+                    </div>
+                    <h2 id="detail-title" data-testid="detail-title" class="font-serif text-3xl sm:text-4xl font-bold leading-tight"></h2>
+                </div>
+            </div>
+
+            <div class="p-6 sm:p-8 space-y-8">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-marrakech-clay/50 border border-amber-200/80">
+                    <div class="flex items-center gap-6 text-stone-700 text-sm">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-marrakech-red text-base"></i>
+                            <div>
+                                <span class="block text-xs text-stone-400 font-medium uppercase tracking-wider">Temps</span>
+                                <span id="detail-time" data-testid="detail-prep-time" class="font-bold"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <label for="servings-input" class="text-xs font-bold text-stone-700 uppercase tracking-wider">Personnes :</label>
+                        <div class="inline-flex items-center border border-amber-200 bg-white rounded-full p-1 shadow-sm">
+                            <button onclick="updateServings(-1)" data-testid="decrement-servings" class="w-8 h-8 rounded-full bg-amber-100 text-terracotta-800 font-bold flex items-center justify-center transition">-</button>
+                            <input type="number" id="servings-input" data-testid="servings-input" value="4" readonly class="w-12 text-center font-bold text-stone-800 text-sm">
+                            <button onclick="updateServings(1)" data-testid="increment-servings" class="w-8 h-8 rounded-full bg-amber-100 text-terracotta-800 font-bold flex items-center justify-center transition">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-serif text-2xl font-bold text-stone-900 flex items-center gap-2">
+                            <i class="fa-solid fa-basket-shopping text-marrakech-red text-lg"></i> Ingrédients
+                        </h3>
+                        <button onclick="exportRecipeToShoppingList()" data-testid="add-recipe-to-groceries-btn" class="px-3.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold text-xs rounded-full border border-emerald-200 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-cart-plus"></i> Ajouter à ma liste de courses
+                        </button>
+                    </div>
+                    <ul id="detail-ingredients" data-testid="detail-ingredients-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></ul>
+                </div>
+
+                <div>
+                    <h3 class="font-serif text-2xl font-bold text-stone-900 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-list-ol text-marrakech-red text-lg"></i> Préparation
+                    </h3>
+                    <ol id="detail-steps" data-testid="detail-steps-list" class="space-y-4"></ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD RECIPE MODAL -->
+    <div id="add-modal" data-testid="add-modal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-stone-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-amber-200 p-6 sm:p-8 relative">
+            <button onclick="closeAddModal()" data-testid="close-add-modal" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-stone-100 text-stone-500 hover:text-stone-900 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="mb-6">
+                <h2 class="font-serif text-3xl font-bold text-stone-900">Ajouter une recette</h2>
+            </div>
+
+            <div id="form-error" data-testid="form-error" class="hidden mb-6 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-sm">
+                <div id="form-error-text"></div>
+            </div>
+
+            <div id="success-message" data-testid="success-message" class="hidden mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm">
+                <span>La recette a été enregistrée avec succès !</span>
+            </div>
+
+            <form id="recipe-form" onsubmit="handleFormSubmit(event)" class="space-y-5" novalidate>
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Titre de la création *</label>
+                    <input type="text" id="recipe-title-input" data-testid="recipe-title-input" class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-stone-200 rounded-xl outline-none text-sm">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Catégorie *</label>
+                        <select id="recipe-category-select" data-testid="recipe-category-select" class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-stone-200 rounded-xl outline-none text-sm font-semibold">
+                            <option value="">Sélectionner</option>
+                            <option value="Pâtisserie">Pâtisserie & Douceurs</option>
+                            <option value="Plats">Plats & Tajines</option>
+                            <option value="Entrées">Entrées & Pain Maison</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Difficulté *</label>
+                        <select id="recipe-difficulty-select" data-testid="recipe-difficulty-select" class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-stone-200 rounded-xl outline-none text-sm font-semibold">
+                            <option value="">Sélectionner</option>
+                            <option value="Facile">Facile</option>
+                            <option value="Moyen">Moyen</option>
+                            <option value="Difficile">Difficile</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Temps (min) *</label>
+                        <input type="number" id="recipe-time-input" data-testid="recipe-time-input" min="1" class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-stone-200 rounded-xl outline-none text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Accès Exclusivité</label>
+                    <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-amber-900 bg-amber-50 border border-amber-300 p-3 rounded-xl">
+                        <input type="checkbox" id="recipe-vip-checkbox" data-testid="recipe-vip-checkbox" class="w-4 h-4 text-amber-600 rounded">
+                        <span>Réserver cette recette aux membres VIP 👑</span>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">URL de la photo</label>
+                    <input type="url" id="recipe-image-input" data-testid="recipe-image-input" class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-stone-200 rounded-xl outline-none text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Ingrédients *</label>
+                    <div id="ingredients-form-container" class="space-y-2"></div>
+                    <button type="button" onclick="addIngredientRow()" data-testid="add-ingredient-btn" class="mt-2 text-xs font-bold text-marrakech-red">+ Ajouter un ingrédient</button>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-stone-700 uppercase mb-1">Étapes de préparation *</label>
+                    <textarea id="recipe-steps-input" data-testid="recipe-steps-input" rows="4" class="w-full px-4 py-2.5 bg-marrakech-clay/50 border border-stone-200 rounded-xl outline-none text-sm"></textarea>
+                </div>
+
+                <div class="pt-4 flex justify-end gap-3 border-t border-stone-100">
+                    <button type="button" onclick="closeAddModal()" class="px-5 py-2.5 rounded-full text-xs font-bold text-stone-600">Annuler</button>
+                    <button type="submit" id="submit-recipe-btn" data-testid="submit-recipe-btn" class="px-6 py-2.5 rounded-full text-xs font-bold text-white bg-marrakech-red">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const DEFAULT_RECIPES = [
+            {
+                id: 'tajine-poulet-citron',
+                title: 'Tajine de Poulet aux Citrons Confits & Olives',
+                category: 'Plats',
+                difficulty: 'Facile',
+                prepTime: 65,
+                baseServings: 4,
+                isVip: false,
+                imageUrl: 'https://images.unsplash.com/photo-1541518763669-27fef04b14e8?auto=format&fit=crop&w=800&q=80',
+                ingredients: [
+                    { name: 'Cuisses de poulet', amount: 4, unit: 'pièces' },
+                    { name: 'Citrons confits', amount: 2, unit: '' },
+                    { name: 'Olives vertes', amount: 120, unit: 'g' },
+                    { name: 'Oignons émincés', amount: 2, unit: '' },
+                    { name: 'Gingembre & Curcuma', amount: 1, unit: 'c. à café' }
+                ],
+                steps: [
+                    'Faire revenir les oignons et le poulet dans le tajine avec de l\'huile d\'olive.',
+                    'Mijoter à feu doux pendant 45 minutes.',
+                    'Ajouter les citrons confits en quartiers et les olives 15 min avant de servir.'
+                ]
+            },
+            {
+                id: 'cornes-gazelle',
+                title: 'Cornes de Gazelle Artisanales à la Fleur d\'Oranger',
+                category: 'Pâtisserie',
+                difficulty: 'Moyen',
+                prepTime: 50,
+                baseServings: 4,
+                isVip: false,
+                imageUrl: 'https://images.unsplash.com/photo-1519676867240-f03562e64548?auto=format&fit=crop&w=800&q=80',
+                ingredients: [
+                    { name: 'Poudre d\'amandes', amount: 250, unit: 'g' },
+                    { name: 'Sucre glace', amount: 100, unit: 'g' },
+                    { name: 'Eau de fleur d\'oranger', amount: 3, unit: 'c. à soupe' }
+                ],
+                steps: [
+                    'Mélanger la poudre d\'amandes, le sucre glace et la fleur d\'oranger.',
+                    'Étaler la pâte très finement et façonner les cornes.',
+                    'Cuire au four à 160°C pendant 12 à 15 minutes.'
+                ]
+            },
+            {
+                id: 'pastilla-poulet-amandes-vip',
+                title: 'Pastilla Royale Poulet, Amandes & Cannelle',
+                category: 'Plats',
+                difficulty: 'Difficile',
+                prepTime: 90,
+                baseServings: 6,
+                isVip: true,
+                imageUrl: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80',
+                ingredients: [
+                    { name: 'Feuilles de Brick / Ouarka', amount: 12, unit: 'feuilles' },
+                    { name: 'Poulet effiloché épicé', amount: 500, unit: 'g' },
+                    { name: 'Amandes dorées & concassées', amount: 200, unit: 'g' },
+                    { name: 'Cannelle & Sucre glace', amount: 2, unit: 'c. à soupe' }
+                ],
+                steps: [
+                    'Mijoter le poulet aux épices et mélanger avec les œufs pochés dans la sauce.',
+                    'Dorer les amandes et les concasser finement avec le sucre et la cannelle.',
+                    'Superposer les feuilles de brick dans un moule rond, garnir et dorer au four à 180°C.'
+                ]
+            }
+        ];
+
+        let recipes = [];
+        let favorites = [];
+        let groceries = [];
+        let users = [];
+        let currentUser = null;
+        let isVipUser = false;
+        let isLoggedIn = false;
+        let currentTab = 'all';
+        let activeRecipe = null;
+        let currentServings = 4;
+
+        window.onload = function() {
+            loadStateFromStorage();
+            updateAuthStatusUI();
+            renderRecipes();
+            renderGroceriesUI();
+            setupDefaultFormIngredients();
+            updateVipUI();
+        };
+
+        function loadStateFromStorage() {
+            const storedRecipes = localStorage.getItem('souad_recipes');
+            const storedFavs = localStorage.getItem('souad_favorites');
+            const storedGroceries = localStorage.getItem('souad_groceries');
+            const storedUsers = localStorage.getItem('souad_registered_users');
+            const storedCurrentUser = localStorage.getItem('souad_current_user');
+            const storedVip = localStorage.getItem('souad_vip_status');
+            const storedAuth = localStorage.getItem('souad_auth_logged_in');
+
+            recipes = storedRecipes ? JSON.parse(storedRecipes) : [...DEFAULT_RECIPES];
+            favorites = storedFavs ? JSON.parse(storedFavs) : [];
+            groceries = storedGroceries ? JSON.parse(storedGroceries) : [];
+            users = storedUsers ? JSON.parse(storedUsers) : [{ name: "Souad Amrani", email: "demo@carnets-souad.fr", password: "password123" }];
+            currentUser = storedCurrentUser ? JSON.parse(storedCurrentUser) : null;
+            isVipUser = storedVip === 'true';
+            isLoggedIn = storedAuth === 'true';
+
+            updateFavCount();
+            updateGroceryCount();
+        }
+
+        // AUTHENTICATION TAB SWITCHER (Login / Register)
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const tabLoginBtn = document.getElementById('auth-tab-login');
+            const tabRegisterBtn = document.getElementById('auth-tab-register');
+            const title = document.getElementById('auth-form-title');
+            const subtitle = document.getElementById('auth-form-subtitle');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                tabLoginBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold transition bg-white text-marrakech-red shadow-sm";
+                tabRegisterBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold transition text-stone-600 hover:text-stone-900";
+                title.innerText = "Connexion";
+                subtitle.innerText = "Veuillez vous connecter pour accéder aux recettes de Souad.";
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                tabRegisterBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold transition bg-white text-marrakech-red shadow-sm";
+                tabLoginBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold transition text-stone-600 hover:text-stone-900";
+                title.innerText = "Créer un compte";
+                subtitle.innerText = "Rejoignez la communauté des Carnets de Souad.";
+            }
+        }
+
+        // LOGIN HANDLER
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email-input').value.trim().toLowerCase();
+            const password = document.getElementById('login-password-input').value;
+            const errorMsg = document.getElementById('login-error-msg');
+
+            const foundUser = users.find(u => u.email === email && u.password === password);
+
+            if (foundUser || (email === "demo@carnets-souad.fr" && password === "password123")) {
+                isLoggedIn = true;
+                currentUser = foundUser || { name: "Utilisateur Démo", email: email };
+                localStorage.setItem('souad_auth_logged_in', 'true');
+                localStorage.setItem('souad_current_user', JSON.stringify(currentUser));
+                errorMsg.classList.add('hidden');
+                updateAuthStatusUI();
+                applyFilters();
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
+        }
+
+        // REGISTRATION HANDLER
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('register-name-input').value.trim();
+            const email = document.getElementById('register-email-input').value.trim().toLowerCase();
+            const password = document.getElementById('register-password-input').value;
+            const errorMsg = document.getElementById('register-error-msg');
+
+            const existingUser = users.find(u => u.email === email);
+            if (existingUser) {
+                errorMsg.innerText = "Cet adresse email est déjà utilisée.";
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            const newUser = { name, email, password };
+            users.push(newUser);
+            localStorage.setItem('souad_registered_users', JSON.stringify(users));
+
+            // Auto-login after registration
+            isLoggedIn = true;
+            currentUser = newUser;
+            localStorage.setItem('souad_auth_logged_in', 'true');
+            localStorage.setItem('souad_current_user', JSON.stringify(currentUser));
+
+            errorMsg.classList.add('hidden');
+            updateAuthStatusUI();
+            applyFilters();
+        }
+
+        function handleAuthClick() {
+            if (isLoggedIn) {
+                isLoggedIn = false;
+                currentUser = null;
+                localStorage.setItem('souad_auth_logged_in', 'false');
+                localStorage.removeItem('souad_current_user');
+                updateAuthStatusUI();
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function updateAuthStatusUI() {
+            const loginWall = document.getElementById('login-wall-section');
+            const appContent = document.getElementById('authenticated-app-content');
+            const authBtnText = document.getElementById('auth-btn-text');
+            const mobileAuthBtnText = document.getElementById('mobile-auth-btn-text');
+            const authBtnIcon = document.getElementById('auth-btn-icon');
+
+            if (isLoggedIn) {
+                loginWall.classList.add('hidden');
+                appContent.classList.remove('hidden');
+                authBtnText.innerText = 'Déconnexion';
+                mobileAuthBtnText.innerText = 'Déconnexion';
+                authBtnIcon.className = 'fa-solid fa-right-from-bracket';
+            } else {
+                loginWall.classList.remove('hidden');
+                appContent.classList.add('hidden');
+                authBtnText.innerText = 'Connexion';
+                mobileAuthBtnText.innerText = 'Connexion';
+                authBtnIcon.className = 'fa-solid fa-user';
+            }
+        }
+
+        // FAKE PAYMENT API SIMULATION WITH LOADER & HTTP STATUS
+        async function handleFakePaymentSubmit(e) {
+            e.preventDefault();
+            const statusMsg = document.getElementById('payment-status-msg');
+            const submitBtn = document.getElementById('payment-submit-btn');
+
+            statusMsg.classList.remove('hidden', 'bg-rose-100', 'text-rose-800', 'bg-emerald-100', 'text-emerald-800');
+            statusMsg.classList.add('bg-amber-100', 'text-amber-800');
+            statusMsg.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Traitement de la transaction en cours...`;
+            submitBtn.disabled = true;
+
+            // Simulate HTTP Request Delay
+            await new Promise(resolve => setTimeout(resolve, 1400));
+
+            const cardNum = document.getElementById('payment-card-input').value.replace(/\s+/g, '');
+            if (cardNum.length < 12) {
+                statusMsg.classList.remove('bg-amber-100', 'text-amber-800');
+                statusMsg.classList.add('bg-rose-100', 'text-rose-800');
+                statusMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> Erreur HTTP 402 : Carte invalide ou refusée.`;
+                submitBtn.disabled = false;
+                return;
+            }
+
+            statusMsg.classList.remove('bg-amber-100', 'text-amber-800');
+            statusMsg.classList.add('bg-emerald-100', 'text-emerald-800');
+            statusMsg.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> HTTP 200 OK : Paiement approuvé ! Accès VIP débloqué.`;
+
+            setTimeout(() => {
+                activateVipSubscription();
+                submitBtn.disabled = false;
+                statusMsg.classList.add('hidden');
+            }, 1000);
+        }
+
+        function saveRecipesToStorage() { localStorage.setItem('souad_recipes', JSON.stringify(recipes)); }
+        function saveFavoritesToStorage() { localStorage.setItem('souad_favorites', JSON.stringify(favorites)); }
+        function saveGroceriesToStorage() { localStorage.setItem('souad_groceries', JSON.stringify(groceries)); }
+
+        function openVipModal() { document.getElementById('vip-modal').classList.remove('hidden'); }
+        function closeVipModal() { document.getElementById('vip-modal').classList.add('hidden'); }
+
+        function activateVipSubscription() {
+            isVipUser = true;
+            localStorage.setItem('souad_vip_status', 'true');
+            updateVipUI();
+            closeVipModal();
+            applyFilters();
+        }
+
+        function deactivateVipSubscription() {
+            isVipUser = false;
+            localStorage.setItem('souad_vip_status', 'false');
+            updateVipUI();
+            closeVipModal();
+            applyFilters();
+        }
+
+        function updateVipUI() {
+            const btnText = document.getElementById('vip-btn-text');
+            const subView = document.getElementById('vip-subscribe-view');
+            const activeView = document.getElementById('vip-active-view');
+            const statusBtn = document.getElementById('vip-status-btn');
+
+            if (isVipUser) {
+                btnText.innerText = 'Membre VIP (Actif)';
+                statusBtn.className = "px-4 py-2.5 rounded-full font-bold text-sm bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-md flex items-center gap-2 border border-emerald-300";
+                subView.classList.add('hidden');
+                activeView.classList.remove('hidden');
+            } else {
+                btnText.innerText = 'Espace VIP';
+                statusBtn.className = "px-4 py-2.5 rounded-full font-bold text-sm bg-gradient-to-r from-amber-500 to-amber-600 text-white shadow-md hover:from-amber-600 hover:to-amber-700 flex items-center gap-2 border border-amber-300";
+                subView.classList.remove('hidden');
+                activeView.classList.add('hidden');
+            }
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            const recipeFilters = document.getElementById('recipe-filters-section');
+            const recipesGrid = document.getElementById('recipes-grid');
+            const groceriesSec = document.getElementById('groceries-section');
+
+            if (tab === 'groceries') {
+                recipeFilters.classList.add('hidden');
+                recipesGrid.classList.add('hidden');
+                groceriesSec.classList.remove('hidden');
+                renderGroceriesUI();
+            } else {
+                recipeFilters.classList.remove('hidden');
+                recipesGrid.classList.remove('hidden');
+                groceriesSec.classList.add('hidden');
+                applyFilters();
+            }
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase().trim();
+            const category = document.getElementById('category-filter').value;
+            const diffFilter = document.getElementById('difficulty-filter').value;
+
+            const filtered = recipes.filter(recipe => {
+                if (currentTab === 'favorites' && !favorites.includes(recipe.id)) return false;
+                const matchesSearch = recipe.title.toLowerCase().includes(searchTerm);
+                const matchesCategory = category === 'all' || recipe.category === category;
+                
+                let matchesAccess = true;
+                if (diffFilter === 'free') matchesAccess = !recipe.isVip;
+                if (diffFilter === 'vip') matchesAccess = recipe.isVip;
+
+                return matchesSearch && matchesCategory && matchesAccess;
+            });
+
+            renderRecipesGrid(filtered);
+        }
+
+        function clearFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('category-filter').value = 'all';
+            document.getElementById('difficulty-filter').value = 'all';
+            applyFilters();
+        }
+
+        function renderRecipes() { applyFilters(); }
+
+        function renderRecipesGrid(items) {
+            const grid = document.getElementById('recipes-grid');
+            const countLabel = document.getElementById('results-count');
+            countLabel.innerText = items.length;
+            grid.innerHTML = '';
+
+            items.forEach(recipe => {
+                const isFav = favorites.includes(recipe.id);
+                const isLocked = recipe.isVip && !isVipUser;
+                const card = document.createElement('article');
+                card.className = "recipe-card bg-white rounded-3xl overflow-hidden border border-amber-200/80 shadow-sm hover:shadow-xl transition flex flex-col group relative";
+                card.setAttribute('data-testid', `recipe-card-${recipe.id}`);
+
+                card.innerHTML = `
+                    <div class="relative h-56 overflow-hidden bg-marrakech-clay">
+                        <img src="${recipe.imageUrl}" alt="${recipe.title}" class="w-full h-full object-cover ${isLocked ? 'blur-sm brightness-90' : ''}">
+                        ${recipe.isVip ? '<span class="absolute top-4 left-4 px-3 py-1 bg-amber-500 text-white font-bold text-xs rounded-full shadow"><i class="fa-solid fa-crown mr-1"></i> VIP</span>' : ''}
+                        <button onclick="toggleFavorite('${recipe.id}', event)" data-testid="favorite-btn-${recipe.id}" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow">
+                            <i class="${isFav ? 'fa-solid text-marrakech-red' : 'fa-regular text-stone-400'} fa-heart text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="font-serif font-bold text-2xl text-stone-900" data-testid="recipe-title-${recipe.id}">${recipe.title}</h3>
+                        </div>
+
+                        ${isLocked ? `
+                            <button onclick="openVipModal()" data-testid="unlock-vip-btn-${recipe.id}" class="w-full py-3 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold text-xs flex items-center justify-center gap-2 shadow">
+                                <i class="fa-solid fa-lock"></i> Débloquer l'accès VIP
+                            </button>
+                        ` : `
+                            <button onclick="openDetailModal('${recipe.id}')" data-testid="view-recipe-btn-${recipe.id}" class="w-full py-3 rounded-full border border-marrakech-red/30 text-marrakech-red bg-amber-50/50 hover:bg-marrakech-red hover:text-white font-semibold text-xs transition">
+                                Découvrir la recette
+                            </button>
+                        `}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleFavorite(id, event) {
+            if (event) event.stopPropagation();
+            const index = favorites.indexOf(id);
+            if (index > -1) favorites.splice(index, 1); else favorites.push(id);
+            saveFavoritesToStorage();
+            updateFavCount();
+            applyFilters();
+        }
+
+        function updateFavCount() { document.getElementById('fav-count').innerText = favorites.length; }
+        function updateGroceryCount() { document.getElementById('grocery-count').innerText = groceries.length; }
+
+        function openDetailModal(id) {
+            activeRecipe = recipes.find(r => r.id === id);
+            if (!activeRecipe) return;
+
+            document.getElementById('detail-title').innerText = activeRecipe.title;
+            document.getElementById('detail-category').innerText = activeRecipe.category;
+            document.getElementById('detail-difficulty').innerText = activeRecipe.difficulty;
+            document.getElementById('detail-time').innerText = `${activeRecipe.prepTime} min`;
+            document.getElementById('detail-img').src = activeRecipe.imageUrl;
+
+            const vipBadge = document.getElementById('detail-vip-badge');
+            if (activeRecipe.isVip) vipBadge.classList.remove('hidden'); else vipBadge.classList.add('hidden');
+
+            renderIngredientsList();
+            renderStepsList();
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() { document.getElementById('detail-modal').classList.add('hidden'); }
+
+        function updateServings(delta) {
+            currentServings = Math.max(1, currentServings + delta);
+            document.getElementById('servings-input').value = currentServings;
+            renderIngredientsList();
+        }
+
+        function renderIngredientsList() {
+            if (!activeRecipe) return;
+            const container = document.getElementById('detail-ingredients');
+            container.innerHTML = '';
+            const factor = currentServings / (activeRecipe.baseServings || 4);
+
+            activeRecipe.ingredients.forEach(ing => {
+                const qty = ing.amount ? Math.round((ing.amount * factor) * 10) / 10 : '';
+                const li = document.createElement('li');
+                li.className = "p-3 rounded-xl bg-marrakech-clay/60 border border-amber-200/60 text-stone-700 text-sm flex gap-2";
+                li.innerHTML = `<span class="font-bold text-terracotta-800" data-testid="ingredient-qty">${qty} ${ing.unit}</span> <span>${ing.name}</span>`;
+                container.appendChild(li);
+            });
+        }
+
+        function renderStepsList() {
+            if (!activeRecipe) return;
+            const container = document.getElementById('detail-steps');
+            container.innerHTML = '';
+            activeRecipe.steps.forEach((step, idx) => {
+                const li = document.createElement('li');
+                li.className = "flex gap-3 text-sm text-stone-700";
+                li.innerHTML = `<span class="w-6 h-6 rounded-full bg-marrakech-red text-white font-bold text-xs flex items-center justify-center shrink-0">${idx + 1}</span> <p>${step}</p>`;
+                container.appendChild(li);
+            });
+        }
+
+        function renderGroceriesUI() {
+            const container = document.getElementById('groceries-list');
+            const emptyState = document.getElementById('empty-groceries-state');
+            updateGroceryCount();
+            container.innerHTML = '';
+
+            if (groceries.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else emptyState.classList.add('hidden');
+
+            groceries.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-4 rounded-2xl border bg-white shadow-sm";
+                div.setAttribute('data-testid', `grocery-item-${item.id}`);
+                div.innerHTML = `
+                    <span class="text-sm font-medium text-stone-800">${item.name} (${item.quantity} ${item.unit})</span>
+                    <button onclick="deleteGrocery('${item.id}')" data-testid="delete-grocery-${item.id}" class="text-stone-400 hover:text-rose-600 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function handleAddGroceryFromUI(e) {
+            e.preventDefault();
+            const name = document.getElementById('add-grocery-input').value.trim();
+            const qty = parseFloat(document.getElementById('add-grocery-qty').value) || 1;
+            const unit = document.getElementById('add-grocery-unit').value.trim();
+            if (!name) return;
+
+            groceries.push({ id: 'g-' + Date.now(), name, quantity: qty, unit });
+            saveGroceriesToStorage();
+            document.getElementById('add-grocery-input').value = '';
+            renderGroceriesUI();
+        }
+
+        function deleteGrocery(id) {
+            groceries = groceries.filter(g => g.id !== id);
+            saveGroceriesToStorage();
+            renderGroceriesUI();
+        }
+
+        function clearAllGroceries() {
+            groceries = [];
+            saveGroceriesToStorage();
+            renderGroceriesUI();
+        }
+
+        function exportRecipeToShoppingList() {
+            if (!activeRecipe) return;
+            activeRecipe.ingredients.forEach(ing => {
+                groceries.push({ id: 'g-' + Date.now() + Math.random(), name: ing.name, quantity: ing.amount || 1, unit: ing.unit || '' });
+            });
+            saveGroceriesToStorage();
+            closeDetailModal();
+            switchTab('groceries');
+        }
+
+        function openAddModal() { document.getElementById('add-modal').classList.remove('hidden'); }
+        function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); }
+
+        function setupDefaultFormIngredients() {
+            const container = document.getElementById('ingredients-form-container');
+            container.innerHTML = '';
+            addIngredientRow();
+        }
+
+        function addIngredientRow() {
+            const container = document.getElementById('ingredients-form-container');
+            const row = document.createElement('div');
+            row.className = "flex gap-2 ingredient-row";
+            row.innerHTML = `
+                <input type="text" placeholder="Ingrédient" data-testid="ing-name-input" class="flex-1 px-3 py-2 bg-marrakech-clay/50 border border-stone-200 rounded-lg text-xs">
+                <input type="number" placeholder="Qté" data-testid="ing-qty-input" class="w-20 px-3 py-2 bg-marrakech-clay/50 border border-stone-200 rounded-lg text-xs">
+                <input type="text" placeholder="Unité" data-testid="ing-unit-input" class="w-24 px-3 py-2 bg-marrakech-clay/50 border border-stone-200 rounded-lg text-xs">
+            `;
+            container.appendChild(row);
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('recipe-title-input').value.trim();
+            const category = document.getElementById('recipe-category-select').value;
+            const difficulty = document.getElementById('recipe-difficulty-select').value;
+            const prepTime = parseInt(document.getElementById('recipe-time-input').value);
+            const isVip = document.getElementById('recipe-vip-checkbox').checked;
+
+            if (!title || !category || !difficulty || isNaN(prepTime)) return;
+
+            recipes.unshift({
+                id: 'recipe-' + Date.now(),
+                title, category, difficulty, prepTime, isVip,
+                baseServings: 4,
+                imageUrl: 'https://images.unsplash.com/photo-1541518763669-27fef04b14e8?auto=format&fit=crop&w=800&q=80',
+                ingredients: [{ name: 'Ingrédient', amount: 100, unit: 'g' }],
+                steps: ['Étape de préparation']
+            });
+
+            saveRecipesToStorage();
+            closeAddModal();
+            applyFilters();
+        }
+
+        function toggleMobileMenu() { document.getElementById('mobile-menu').classList.toggle('hidden'); }
+    </script>
+</body>
+</html>
